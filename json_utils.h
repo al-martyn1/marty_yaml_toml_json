@@ -498,7 +498,7 @@ void findPathMatches( nlohmann::json               &jNode
 }
 
 //----------------------------------------------------------------------------
-void simpleUpdateNode( nlohmann::json  &jNodeTo, nlohmann::json  &jNodeFrom )
+void simpleUpdateNode( nlohmann::json  &jNodeTo, const nlohmann::json  &jNodeFrom, bool allowOverride=true )
 {
     typedef nlohmann::json  jnode_type;
 
@@ -517,16 +517,20 @@ void simpleUpdateNode( nlohmann::json  &jNodeTo, nlohmann::json  &jNodeFrom )
     // if (jNodeFrom.type()!=jnode_type::value_t::object)
     //     return;
 
-    for (nlohmann::json::iterator it=jNodeFrom.begin(); it!=jNodeFrom.end(); ++it)
+    for (nlohmann::json::const_iterator it=jNodeFrom.cbegin(); it!=jNodeFrom.cend(); ++it)
     {
         auto iterTo = jNodeTo.find(it.key());
         if (iterTo==jNodeTo.end())
         {
+            // target not exist, assign allowed
             jNodeTo[it.key()] = it.value();
         }
         else
         {
-            simpleUpdateNode(iterTo.value(),it.value());
+            if ((iterTo.value()==jnode_type::value_t::object && it.value()==jnode_type::value_t::object) || allowOverride)
+            {
+                simpleUpdateNode(iterTo.value(),it.value(),allowOverride);
+            }
         }
     }
 
