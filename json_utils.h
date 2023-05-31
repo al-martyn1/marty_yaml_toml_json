@@ -355,7 +355,7 @@ void removePaths( nlohmann::json &jNode
         for (nlohmann::json::iterator it=jNode.begin(); it!=jNode.end(); ++it, ++idx)
         {
             auto childPath = path + "/" + jsonNameEscape(std::to_string(idx));
-            if (umba::regex_helpers::regexMatch(childPath, r, flags))
+            if (umba::regex_helpers::regexMatch(childPath, r, 0, flags))
             {
                 removeNodeIterators.emplace_back(it);
             }
@@ -376,7 +376,7 @@ void removePaths( nlohmann::json &jNode
         for (nlohmann::json::iterator it=jNode.begin(); it!=jNode.end(); ++it)
         {
             auto childPath = path + "/" + jsonNameEscape(it.key());
-            if (umba::regex_helpers::regexMatch(childPath, r, flags))
+            if (umba::regex_helpers::regexMatch(childPath, r, 0, flags))
             {
                 removeNodeIterators.emplace_back(it);
             }
@@ -465,7 +465,7 @@ void findPathMatches( nlohmann::json               &jNode
         for (nlohmann::json::iterator it=jNode.begin(); it!=jNode.end(); ++it, ++idx)
         {
             auto childPath = path + "/" + std::to_string(idx);
-            if (umba::regex_helpers::regexMatch(childPath, r, flags))
+            if (umba::regex_helpers::regexMatch(childPath, r, 0, flags))
             {
                 pathMatches.emplace_back(childPath);
                 if (recurse)
@@ -483,7 +483,7 @@ void findPathMatches( nlohmann::json               &jNode
         for (nlohmann::json::iterator it=jNode.begin(); it!=jNode.end(); ++it)
         {
             auto childPath = path + "/" + jsonNameEscape(it.key());
-            if (umba::regex_helpers::regexMatch(childPath, r, flags))
+            if (umba::regex_helpers::regexMatch(childPath, r, 0, flags))
             {
                 pathMatches.emplace_back(childPath);
                 if (recurse)
