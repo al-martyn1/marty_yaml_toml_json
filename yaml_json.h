@@ -8,6 +8,8 @@
 //#include "nlohmann/json.hpp"
 
 
+
+
 // marty::json_utils::
 
 namespace marty{
@@ -132,7 +134,7 @@ nlohmann::json parseJsonOrYaml( std::istream &in
     char buffer[4096];
     while (in.read(buffer, sizeof(buffer)))
         data.append(buffer, sizeof(buffer));
-    data.append(buffer, in.gcount());
+    data.append(buffer, (unsigned)in.gcount());
     
     return parseJsonOrYaml( data, allowComments, pErrMsg, pTmpJson, pDetectedFormat );
 

@@ -1,13 +1,27 @@
 #pragma once
 
-#include "yaml-cpp/eventhandler.h"
-#include "yaml-cpp/yaml.h"  // IWYU pragma: keep
+#include <yaml-cpp/eventhandler.h>
+#include <yaml-cpp/yaml.h>  // IWYU pragma: keep
 
 #include <algorithm>
 #include <iterator>
 #include <sstream>
 
+
+//----------------------------------------------------------------------------
+#ifndef MARTY_ARG_USED
+
+    //! Подавление варнинга о неиспользованном аргументе
+    #define MARTY_ARG_USED(x)                   (void)(x)
+
+#endif
+
+//----------------------------------------------------------------------------
+
+
 #include "fsss.h"
+
+
 
 
 // marty::yaml2json::
@@ -122,9 +136,8 @@ DetectedValueType detectValueType( const std::string &str )
 
     int decDigits = counters[idxDigit ];
     int hexDigits = counters[idxDigitX]; // only hex digits
-    int allDigits = decDigits + hexDigits;
-    int allSigns  = counters[idxPlus]+counters[idxMinus];
-
+    //int allDigits = decDigits + hexDigits; // not used
+    //int allSigns  = counters[idxPlus]+counters[idxMinus]; // not used
 
     //auto removeLeadingPlus()
 
@@ -157,7 +170,7 @@ DetectedValueType detectValueType( const std::string &str )
         if (tailLen>0) // в хвосте остались какие-то цифры и/или другие знаки
         {
             const int allowedLeadingZeros = counters[idxDot]>0 ? 1 : 0; // Если есть точка, то разрешен один ведущий ноль, иначе - ни одного
-            if (lzCounter<=allowedLeadingZeros)
+            if (lzCounter<=(unsigned)allowedLeadingZeros)
                return DetectedValueType::number;
         }
 
@@ -446,6 +459,8 @@ const char* makeJsonLf(int indent)
 template< typename StreamType > inline
 void printScalar( StreamType &s, int indent, const YAML::Node &n, bool isFirst, bool isLast, std::string name = "" )
 {
+    MARTY_ARG_USED(isFirst);
+
     std::string value = "null";
     if (n.Type()==YAML::NodeType::value::Scalar)
     {

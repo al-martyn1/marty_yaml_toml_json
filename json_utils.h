@@ -8,7 +8,21 @@
 #include <sstream>
 #include <iterator>
 
-#include "nlohmann/json.hpp"
+#include <nlohmann/json.hpp>
+
+
+//----------------------------------------------------------------------------
+#ifndef MARTY_ARG_USED
+
+    //! Подавление варнинга о неиспользованном аргументе
+    #define MARTY_ARG_USED(x)                   (void)(x)
+
+#endif
+
+//----------------------------------------------------------------------------
+
+
+
 #include "simple_formatter_json_inserter.h"
 
 #include "umba/regex_helpers.h"
@@ -16,6 +30,9 @@
 // #include "yaml_utils.h"
 
 #include "fsss.h"
+
+
+
 
 
 // marty::json_utils::
@@ -94,6 +111,7 @@ std::string nodeTypeName( JsonNodeType nt )
         case JsonNodeType::string         : return "string"  ;
         case JsonNodeType::array          : return "array"   ;
         case JsonNodeType::object         : return "object"  ;
+        case JsonNodeType::unknown        : [[fallthrough]]  ;
         default                           : return "unknown" ;
     }
 }
@@ -266,7 +284,7 @@ void removePaths( nlohmann::json &jNode
 {
     typedef nlohmann::json  jnode_type;
 
-    auto nodeType = marty::json_utils::nodeType(jNode);
+    // auto nodeType = marty::json_utils::nodeType(jNode);
 
     std::vector< nlohmann::json::iterator > removeNodeIterators;
 
@@ -333,7 +351,7 @@ void removePaths( nlohmann::json &jNode
 {
     typedef nlohmann::json  jnode_type;
 
-    auto nodeType = marty::json_utils::nodeType(jNode);
+    //auto nodeType = marty::json_utils::nodeType(jNode);
 
     std::vector< nlohmann::json::iterator > removeNodeIterators;
 
@@ -404,7 +422,7 @@ void findPathMatches( nlohmann::json               &jNode
 {
     typedef nlohmann::json  jnode_type;
 
-    auto nodeType = marty::json_utils::nodeType(jNode);
+    //auto nodeType = marty::json_utils::nodeType(jNode);
 
     //if (marty::json_utils::isArrayNode(nodeType))
     if (jNode.type()==jnode_type::value_t::array)
@@ -456,7 +474,7 @@ void findPathMatches( nlohmann::json               &jNode
 {
     typedef nlohmann::json  jnode_type;
 
-    auto nodeType = marty::json_utils::nodeType(jNode);
+    //auto nodeType = marty::json_utils::nodeType(jNode);
 
     //if (marty::json_utils::isArrayNode(nodeType))
     if (jNode.type()==jnode_type::value_t::array)
