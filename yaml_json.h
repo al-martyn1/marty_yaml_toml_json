@@ -24,7 +24,7 @@ enum class FileFormat
     yaml
 };
 
-// 
+inline
 nlohmann::json parseJsonOrYaml( const std::string &data
                               , bool allowComments = true
                               , std::string *pErrMsg = 0
@@ -123,6 +123,7 @@ nlohmann::json parseJsonOrYaml( const std::string &data
 // iterator_input_adapter
 
 
+inline
 nlohmann::json parseJsonOrYaml( std::istream &in
                               , bool allowComments = true
                               , std::string *pErrMsg = 0
@@ -156,6 +157,7 @@ nlohmann::json parseJsonOrYaml( std::istream &in
 }
 
 //----------------------------------------------------------------------------
+inline
 nlohmann::json parseJsonOrYamlFromFile( const std::string &fileName
                               , bool allowComments = true
                               , std::string *pErrMsg = 0
