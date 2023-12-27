@@ -276,6 +276,7 @@ std::string jsonNameUnescape( const std::string &str )
     - References and iterators to the erased elements are invalidated. Other references and iterators are not affected.
 
  */
+inline
 void removePaths( nlohmann::json &jNode
                 , const std::basic_regex<char> &r
                 , std::regex_constants::match_flag_type flags = std::regex_constants::match_default
@@ -343,6 +344,7 @@ void removePaths( nlohmann::json &jNode
 }
 
 //----------------------------------------------------------------------------
+inline
 void removePaths( nlohmann::json &jNode
                 , const std::vector< std::basic_regex<char> > &r
                 , std::regex_constants::match_flag_type flags = std::regex_constants::match_default
@@ -412,6 +414,7 @@ void removePaths( nlohmann::json &jNode
 }
 
 //----------------------------------------------------------------------------
+inline
 void findPathMatches( nlohmann::json               &jNode
                     , std::vector<std::string>     &pathMatches
                     , const std::basic_regex<char> &r
@@ -464,6 +467,7 @@ void findPathMatches( nlohmann::json               &jNode
 }
 
 //----------------------------------------------------------------------------
+inline
 void findPathMatches( nlohmann::json               &jNode
                     , std::vector<std::string>     &pathMatches
                     , const std::vector< std::basic_regex<char> > &r
@@ -516,6 +520,7 @@ void findPathMatches( nlohmann::json               &jNode
 }
 
 //----------------------------------------------------------------------------
+inline
 void simpleUpdateNode( nlohmann::json  &jNodeTo, const nlohmann::json  &jNodeFrom, bool allowOverride=true )
 {
     typedef nlohmann::json  jnode_type;
