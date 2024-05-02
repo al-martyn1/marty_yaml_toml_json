@@ -309,6 +309,7 @@ bool writeScalar( std::string &str, nlohmann::json &j )
     marty::yaml2json::FastSimpleStringStream fssm;
     writeScalar(fssm, j);
     str = fssm.str();
+    return true;
 }
 
 //----------------------------------------------------------------------------
