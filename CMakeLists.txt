@@ -29,4 +29,4 @@ file(GLOB_RECURSE headers "${MODULE_ROOT}/*.h")
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} PREFIX "Headers" FILES ${headers})
 
 add_library(${PROJECT_NAME} ${sources} ${headers})
-add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
+add_library(marty::yaml_toml_json ALIAS ${PROJECT_NAME})
