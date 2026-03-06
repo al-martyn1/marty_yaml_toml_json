@@ -1,7 +1,19 @@
 #pragma once
 
+// !!! MSVC starts to got warnings on yaml-cpp lib
+// !!! Update yaml-cpp?
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable:4267) // - warning C4267: 'argument': conversion from 'size_t' to '_Ty', possible loss of data
+#endif
+
 #include <yaml-cpp/eventhandler.h>
 #include <yaml-cpp/yaml.h>  // IWYU pragma: keep
+
+#if defined(_MSC_VER)
+    #pragma warning(pop)
+#endif
+
 
 #include <algorithm>
 #include <iterator>
