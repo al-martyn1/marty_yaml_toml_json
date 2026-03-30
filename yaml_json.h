@@ -1,6 +1,8 @@
 #pragma once
 
 
+#include "declare_marty_json.h"
+//
 #include "yaml_utils.h"
 #include "json_utils.h"
 #include "fsss.h"
@@ -25,14 +27,14 @@ enum class FileFormat
 };
 
 inline
-nlohmann::json parseJsonOrYaml( const std::string &data
+marty::json parseJsonOrYaml( const std::string &data
                               , bool allowComments = true
                               , std::string *pErrMsg = 0
                               , std::string *pTmpJson = 0
                               , FileFormat *pDetectedFormat = 0
                               )
 {
-    nlohmann::json jRes;
+    marty::json jRes;
 
     FileFormat detectedFormat = FileFormat::unknown;
 
@@ -56,7 +58,7 @@ nlohmann::json parseJsonOrYaml( const std::string &data
     {
         try
         {
-            jRes = nlohmann::json::parse( data
+            jRes = marty::json::parse( data
                                         , nullptr        // parser_callback_t
                                         , true           // allow_exceptions
                                         , allowComments  // ignore_comments
@@ -87,7 +89,7 @@ nlohmann::json parseJsonOrYaml( const std::string &data
         if (pTmpJson)
            *pTmpJson = fssm.str();
         
-        jRes = nlohmann::json::parse( fssm.str()
+        jRes = marty::json::parse( fssm.str()
                                     , nullptr        // parser_callback_t
                                     , true           // allow_exceptions
                                     , allowComments  // ignore_comments
@@ -124,7 +126,7 @@ nlohmann::json parseJsonOrYaml( const std::string &data
 
 
 inline
-nlohmann::json parseJsonOrYaml( std::istream &in
+marty::json parseJsonOrYaml( std::istream &in
                               , bool allowComments = true
                               , std::string *pErrMsg = 0
                               , std::string *pTmpJson = 0
@@ -140,13 +142,13 @@ nlohmann::json parseJsonOrYaml( std::istream &in
     return parseJsonOrYaml( data, allowComments, pErrMsg, pTmpJson, pDetectedFormat );
 
 #if 0
-    nlohmann::json jRes;
+    marty::json jRes;
 
     try
     {
         // https://habr.com/ru/post/122283/
         // https://en.cppreference.com/w/cpp/iterator/istream_iterator
-        jRes = nlohmann::json::parse( std::istream_iterator<char>(in)
+        jRes = marty::json::parse( std::istream_iterator<char>(in)
                                     , std::istream_iterator<char>()
                                     , nullptr        // parser_callback_t
                                     , true           // allow_exceptions
@@ -158,7 +160,7 @@ nlohmann::json parseJsonOrYaml( std::istream &in
 
 //----------------------------------------------------------------------------
 inline
-nlohmann::json parseJsonOrYamlFromFile( const std::string &fileName
+marty::json parseJsonOrYamlFromFile( const std::string &fileName
                               , bool allowComments = true
                               , std::string *pErrMsg = 0
                               , std::string *pTmpJson = 0
@@ -175,7 +177,7 @@ nlohmann::json parseJsonOrYamlFromFile( const std::string &fileName
         if (pErrMsg)
             *pErrMsg = "Failed to open file '" + fileName + "'";
 
-        return nlohmann::json{};
+        return marty::json{};
     }
 
     return parseJsonOrYaml( in, allowComments, pErrMsg, pTmpJson, pDetectedFormat );
@@ -199,7 +201,7 @@ std::string makeIndentStr( int indent )
 
 //----------------------------------------------------------------------------
 inline
-bool isScalar( nlohmann::json &j )
+bool isScalar( marty::json &j )
 {
     if (j.is_null() || j.is_boolean() || j.is_number() || j.is_string())
         return true;
@@ -260,7 +262,7 @@ std::string escapeSingleQuotes( const std::string &s)
 }
 
 template<typename StreamType> inline
-bool writeScalar( StreamType &s, nlohmann::json &j )
+bool writeScalar( StreamType &s, marty::json &j )
 {
     if (j.is_null())
     {
@@ -304,7 +306,7 @@ bool writeScalar( StreamType &s, nlohmann::json &j )
 
 //----------------------------------------------------------------------------
 inline
-bool writeScalar( std::string &str, nlohmann::json &j )
+bool writeScalar( std::string &str, marty::json &j )
 {
     marty::yaml2json::FastSimpleStringStream fssm;
     writeScalar(fssm, j);
@@ -314,7 +316,7 @@ bool writeScalar( std::string &str, nlohmann::json &j )
 
 //----------------------------------------------------------------------------
 inline
-std::string getScalarStr( nlohmann::json &j )
+std::string getScalarStr( marty::json &j )
 {
     marty::yaml2json::FastSimpleStringStream fssm;
     writeScalar(fssm, j);
@@ -323,7 +325,7 @@ std::string getScalarStr( nlohmann::json &j )
 
 //----------------------------------------------------------------------------
 template<typename StreamType> inline
-void writeNodeImpl( StreamType &s, nlohmann::json &j // j - не меняется, просто нет константной версии begin/end
+void writeNodeImpl( StreamType &s, marty::json &j // j - не меняется, просто нет константной версии begin/end
                   , int indent, int indentInc, bool noFirstIndent = false
                   ) 
 {
@@ -340,7 +342,7 @@ void writeNodeImpl( StreamType &s, nlohmann::json &j // j - не меняетс�
     else if (j.is_object())
     {
         bool bFirst = true;
-        for (nlohmann::json::iterator it = j.begin(); it != j.end(); ++it)
+        for (marty::json::iterator it = j.begin(); it != j.end(); ++it)
         {
             if (!(bFirst && noFirstIndent))
             {
@@ -373,7 +375,7 @@ void writeNodeImpl( StreamType &s, nlohmann::json &j // j - не меняетс�
     else if (j.is_array())
     {
         bool bFirst = true;
-        for (nlohmann::json::iterator it = j.begin(); it != j.end(); ++it)
+        for (marty::json::iterator it = j.begin(); it != j.end(); ++it)
         {
             s << makeIndentStr(indent) << "- ";
             if (isScalar(*it))
@@ -394,7 +396,7 @@ void writeNodeImpl( StreamType &s, nlohmann::json &j // j - не меняетс�
 
 //----------------------------------------------------------------------------
 template<typename StreamType> inline
-void writeYaml( StreamType &s, nlohmann::json &j // j - не меняется, просто нет константной версии begin/end
+void writeYaml( StreamType &s, marty::json &j // j - не меняется, просто нет константной версии begin/end
               )
 {
     writeNodeImpl( s, j, 0, 2, false );

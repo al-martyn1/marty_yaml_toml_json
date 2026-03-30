@@ -3,6 +3,9 @@
 
 // #include "yaml_utils.h"
 
+#include "declare_marty_json.h"
+//
+
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -66,7 +69,7 @@ enum class JsonNodeType
 
 //------------------------------
 inline
-JsonNodeType nodeType(const nlohmann::json &jNode)
+JsonNodeType nodeType(const marty::json &jNode)
 {
     if (jNode.is_null())
         return JsonNodeType::null;
@@ -145,28 +148,28 @@ bool isObjectNode( JsonNodeType nodeType )
 
 //------------------------------
 inline
-std::string nodeTypeName( const nlohmann::json &jNode )
+std::string nodeTypeName( const marty::json &jNode )
 {
     return nodeTypeName(nodeType(jNode));
 }
 
 //------------------------------
 inline
-bool isScalarNode( const nlohmann::json &jNode )
+bool isScalarNode( const marty::json &jNode )
 {
     return isScalarNode(nodeType(jNode));
 }
 
 //------------------------------
 inline
-bool isArrayNode( const nlohmann::json &jNode )
+bool isArrayNode( const marty::json &jNode )
 {
     return isArrayNode(nodeType(jNode));
 }
 
 //------------------------------
 inline
-bool isObjectNode( const nlohmann::json &jNode )
+bool isObjectNode( const marty::json &jNode )
 {
     return isObjectNode(nodeType(jNode));
 }
@@ -178,15 +181,15 @@ bool isObjectNode( const nlohmann::json &jNode )
 
 //----------------------------------------------------------------------------
 inline
-nlohmann::json_pointer<nlohmann::json> makeJsonPointer(const std::string &path)
+nlohmann::json_pointer<marty::json> makeJsonPointer(const std::string &path)
 {
     if (!path.empty() && path[0]!='/')
-        return nlohmann::json_pointer<nlohmann::json>(std::string("/")+path);
-    return nlohmann::json_pointer<nlohmann::json>(path);
+        return nlohmann::json_pointer<marty::json>(std::string("/")+path);
+    return nlohmann::json_pointer<marty::json>(path);
 }
 
 inline
-nlohmann::json_pointer<nlohmann::json> makeJsonPointer(const char* path)
+nlohmann::json_pointer<marty::json> makeJsonPointer(const char* path)
 {
     if (!path)
         //return nlohmann::json_pointer<json>();
@@ -277,24 +280,24 @@ std::string jsonNameUnescape( const std::string &str )
 
  */
 inline
-void removePaths( nlohmann::json &jNode
+void removePaths( marty::json &jNode
                 , const std::basic_regex<char> &r
                 , std::regex_constants::match_flag_type flags = std::regex_constants::match_default
                 , std::string path = ""
                 )
 {
-    typedef nlohmann::json  jnode_type;
+    typedef marty::json  jnode_type;
 
     // auto nodeType = marty::json_utils::nodeType(jNode);
 
-    std::vector< nlohmann::json::iterator > removeNodeIterators;
+    std::vector< marty::json::iterator > removeNodeIterators;
 
-    auto eraseChilds = [&]( nlohmann::json &j )
+    auto eraseChilds = [&]( marty::json &j )
     {
-        std::vector< nlohmann::json::iterator >::const_reverse_iterator rit = removeNodeIterators.rbegin();
+        std::vector< marty::json::iterator >::const_reverse_iterator rit = removeNodeIterators.rbegin();
         for(; rit!=removeNodeIterators.rend(); ++rit )
         {
-            nlohmann::json::iterator eit = *rit;
+            marty::json::iterator eit = *rit;
             j.erase(eit);
         }
     };
@@ -304,7 +307,7 @@ void removePaths( nlohmann::json &jNode
     if (jNode.type()==jnode_type::value_t::array)
     {
         unsigned idx = 0;
-        for (nlohmann::json::iterator it=jNode.begin(); it!=jNode.end(); ++it, ++idx)
+        for (marty::json::iterator it=jNode.begin(); it!=jNode.end(); ++it, ++idx)
         {
             auto childPath = path + "/" + std::to_string(idx);
             if (umba::regex_helpers::regexMatch(childPath, r, flags))
@@ -315,7 +318,7 @@ void removePaths( nlohmann::json &jNode
 
         eraseChilds(jNode);
 
-        for (nlohmann::json::iterator it=jNode.begin(); it!=jNode.end(); ++it, ++idx)
+        for (marty::json::iterator it=jNode.begin(); it!=jNode.end(); ++it, ++idx)
         {
             removePaths( *it, r );
         }
@@ -324,7 +327,7 @@ void removePaths( nlohmann::json &jNode
     //else if (marty::json_utils::isObjectNode(nodeType))
     else if (jNode.type()==jnode_type::value_t::object)
     {
-        for (nlohmann::json::iterator it=jNode.begin(); it!=jNode.end(); ++it)
+        for (marty::json::iterator it=jNode.begin(); it!=jNode.end(); ++it)
         {
             auto childPath = path + "/" + jsonNameEscape(it.key());
             if (umba::regex_helpers::regexMatch(childPath, r, flags))
@@ -335,7 +338,7 @@ void removePaths( nlohmann::json &jNode
 
         eraseChilds(jNode);
 
-        for (nlohmann::json::iterator it=jNode.begin(); it!=jNode.end(); ++it)
+        for (marty::json::iterator it=jNode.begin(); it!=jNode.end(); ++it)
         {
             removePaths( it.value(), r );
         }
@@ -345,24 +348,24 @@ void removePaths( nlohmann::json &jNode
 
 //----------------------------------------------------------------------------
 inline
-void removePaths( nlohmann::json &jNode
+void removePaths( marty::json &jNode
                 , const std::vector< std::basic_regex<char> > &r
                 , std::regex_constants::match_flag_type flags = std::regex_constants::match_default
                 , std::string path = ""
                 )
 {
-    typedef nlohmann::json  jnode_type;
+    typedef marty::json  jnode_type;
 
     //auto nodeType = marty::json_utils::nodeType(jNode);
 
-    std::vector< nlohmann::json::iterator > removeNodeIterators;
+    std::vector< marty::json::iterator > removeNodeIterators;
 
-    auto eraseChilds = [&]( nlohmann::json &j )
+    auto eraseChilds = [&]( marty::json &j )
     {
-        std::vector< nlohmann::json::iterator >::const_reverse_iterator rit = removeNodeIterators.rbegin();
+        std::vector< marty::json::iterator >::const_reverse_iterator rit = removeNodeIterators.rbegin();
         for(; rit!=removeNodeIterators.rend(); ++rit )
         {
-            nlohmann::json::iterator eit = *rit;
+            marty::json::iterator eit = *rit;
             j.erase(eit);
         }
     };
@@ -372,7 +375,7 @@ void removePaths( nlohmann::json &jNode
     if (jNode.type()==jnode_type::value_t::array)
     {
         unsigned idx = 0;
-        for (nlohmann::json::iterator it=jNode.begin(); it!=jNode.end(); ++it, ++idx)
+        for (marty::json::iterator it=jNode.begin(); it!=jNode.end(); ++it, ++idx)
         {
             auto childPath = path + "/" + jsonNameEscape(std::to_string(idx));
             if (umba::regex_helpers::regexMatch(childPath, r, 0, flags))
@@ -383,7 +386,7 @@ void removePaths( nlohmann::json &jNode
 
         eraseChilds(jNode);
 
-        for (nlohmann::json::iterator it=jNode.begin(); it!=jNode.end(); ++it, ++idx)
+        for (marty::json::iterator it=jNode.begin(); it!=jNode.end(); ++it, ++idx)
         {
             auto childPath = path + "/" + std::to_string(idx);
             removePaths( *it, r, flags, childPath );
@@ -393,7 +396,7 @@ void removePaths( nlohmann::json &jNode
     //else if (marty::json_utils::isObjectNode(nodeType))
     else if (jNode.type()==jnode_type::value_t::object)
     {
-        for (nlohmann::json::iterator it=jNode.begin(); it!=jNode.end(); ++it)
+        for (marty::json::iterator it=jNode.begin(); it!=jNode.end(); ++it)
         {
             auto childPath = path + "/" + jsonNameEscape(it.key());
             if (umba::regex_helpers::regexMatch(childPath, r, 0, flags))
@@ -404,7 +407,7 @@ void removePaths( nlohmann::json &jNode
 
         eraseChilds(jNode);
 
-        for (nlohmann::json::iterator it=jNode.begin(); it!=jNode.end(); ++it)
+        for (marty::json::iterator it=jNode.begin(); it!=jNode.end(); ++it)
         {
             auto childPath = path + "/" + jsonNameEscape(it.key());
             removePaths( it.value(), r, flags, childPath );
@@ -415,7 +418,7 @@ void removePaths( nlohmann::json &jNode
 
 //----------------------------------------------------------------------------
 inline
-void findPathMatches( nlohmann::json               &jNode
+void findPathMatches( marty::json               &jNode
                     , std::vector<std::string>     &pathMatches
                     , const std::basic_regex<char> &r
                     , bool                         recurse = true // lookup recursively in matched nodes
@@ -423,7 +426,7 @@ void findPathMatches( nlohmann::json               &jNode
                     , std::string path = ""
                     )
 {
-    typedef nlohmann::json  jnode_type;
+    typedef marty::json  jnode_type;
 
     //auto nodeType = marty::json_utils::nodeType(jNode);
 
@@ -431,7 +434,7 @@ void findPathMatches( nlohmann::json               &jNode
     if (jNode.type()==jnode_type::value_t::array)
     {
         unsigned idx = 0;
-        for (nlohmann::json::iterator it=jNode.begin(); it!=jNode.end(); ++it, ++idx)
+        for (marty::json::iterator it=jNode.begin(); it!=jNode.end(); ++it, ++idx)
         {
             auto childPath = path + "/" + std::to_string(idx);
             if (umba::regex_helpers::regexMatch(childPath, r, flags))
@@ -449,7 +452,7 @@ void findPathMatches( nlohmann::json               &jNode
     //else if (marty::json_utils::isObjectNode(nodeType))
     else if (jNode.type()==jnode_type::value_t::object)
     {
-        for (nlohmann::json::iterator it=jNode.begin(); it!=jNode.end(); ++it)
+        for (marty::json::iterator it=jNode.begin(); it!=jNode.end(); ++it)
         {
             auto childPath = path + "/" + jsonNameEscape(it.key());
             if (umba::regex_helpers::regexMatch(childPath, r, flags))
@@ -468,7 +471,7 @@ void findPathMatches( nlohmann::json               &jNode
 
 //----------------------------------------------------------------------------
 inline
-void findPathMatches( nlohmann::json               &jNode
+void findPathMatches( marty::json               &jNode
                     , std::vector<std::string>     &pathMatches
                     , const std::vector< std::basic_regex<char> > &r
                     , bool                         recurse = true
@@ -476,7 +479,7 @@ void findPathMatches( nlohmann::json               &jNode
                     , std::string path = ""
                     )
 {
-    typedef nlohmann::json  jnode_type;
+    typedef marty::json  jnode_type;
 
     //auto nodeType = marty::json_utils::nodeType(jNode);
 
@@ -484,7 +487,7 @@ void findPathMatches( nlohmann::json               &jNode
     if (jNode.type()==jnode_type::value_t::array)
     {
         unsigned idx = 0;
-        for (nlohmann::json::iterator it=jNode.begin(); it!=jNode.end(); ++it, ++idx)
+        for (marty::json::iterator it=jNode.begin(); it!=jNode.end(); ++it, ++idx)
         {
             auto childPath = path + "/" + std::to_string(idx);
             if (umba::regex_helpers::regexMatch(childPath, r, 0, flags))
@@ -502,7 +505,7 @@ void findPathMatches( nlohmann::json               &jNode
     //else if (marty::json_utils::isObjectNode(nodeType))
     else if (jNode.type()==jnode_type::value_t::object)
     {
-        for (nlohmann::json::iterator it=jNode.begin(); it!=jNode.end(); ++it)
+        for (marty::json::iterator it=jNode.begin(); it!=jNode.end(); ++it)
         {
             auto childPath = path + "/" + jsonNameEscape(it.key());
             if (umba::regex_helpers::regexMatch(childPath, r, 0, flags))
@@ -521,9 +524,9 @@ void findPathMatches( nlohmann::json               &jNode
 
 //----------------------------------------------------------------------------
 inline
-void simpleUpdateNode( nlohmann::json  &jNodeTo, const nlohmann::json  &jNodeFrom, bool allowOverride=true )
+void simpleUpdateNode( marty::json  &jNodeTo, const marty::json  &jNodeFrom, bool allowOverride=true )
 {
-    typedef nlohmann::json  jnode_type;
+    typedef marty::json  jnode_type;
 
     if (jNodeTo == jNodeFrom)
         return;
@@ -540,7 +543,7 @@ void simpleUpdateNode( nlohmann::json  &jNodeTo, const nlohmann::json  &jNodeFro
     // if (jNodeFrom.type()!=jnode_type::value_t::object)
     //     return;
 
-    for (nlohmann::json::const_iterator it=jNodeFrom.cbegin(); it!=jNodeFrom.cend(); ++it)
+    for (marty::json::const_iterator it=jNodeFrom.cbegin(); it!=jNodeFrom.cend(); ++it)
     {
         auto iterTo = jNodeTo.find(it.key());
         if (iterTo==jNodeTo.end())
